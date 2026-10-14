@@ -5,7 +5,6 @@ using CyberSecurityAwarenessBot;
 
 namespace CyberSecurityAwarenessBotPart2;
 
-/// <summary>Contains the chatbot's conversation logic, memory, keyword matching and sentiment detection.</summary>
 public sealed class ChatBotEngine
 {
     private readonly Random _random = new();

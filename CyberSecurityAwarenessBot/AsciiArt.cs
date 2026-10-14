@@ -1,6 +1,5 @@
 namespace CyberSecurityAwarenessBot;
 
-/// <summary>Part 1 ASCII logo, adapted for a graphical interface.</summary>
 internal static class AsciiArt
 {
     public const string Logo = @"   _____      _                _____

@@ -1,6 +1,5 @@
 namespace CyberSecurityAwarenessBot;
 
-/// <summary>Part 1 welcome greeting, displayed in the Windows Forms GUI.</summary>
 internal static class Greeting
 {
     public static string WelcomeUser(string userName) =>

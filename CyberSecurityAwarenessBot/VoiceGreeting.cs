@@ -4,7 +4,7 @@ using System.Media;
 
 namespace CyberSecurityAwarenessBot;
 
-/// <summary>Part 1 WAV voice greeting, loaded from the application output folder.</summary>
+
 internal static class VoiceGreeting
 {
     public static void PlayGreeting()
