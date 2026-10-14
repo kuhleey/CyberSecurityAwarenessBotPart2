@@ -2,11 +2,6 @@
 
 A Windows Forms C# application combining Part 1's original voice greeting, ASCII-art logo, user greeting, input validation, chatbot responses, and Part 2's GUI, keyword recognition, varied responses, follow-up context, memory, sentiment detection and error handling.
 
-## Setup
-1. Use **Windows** and **Visual Studio 2022 (17.8+)** with **.NET desktop development** and the **.NET 8 SDK**.
-2. Extract the ZIP, then open `CyberSecurityAwarenessBot.sln`.
-3. Build > Rebuild Solution, then press F5.
-4. The GUI is coded in `MainForm.cs`; a separate Designer file is not required.
 
 ## Features and where to find them
 - `MainForm.cs`: GUI, chat controls, name input, ASCII logo display, voice button and validation messages.
