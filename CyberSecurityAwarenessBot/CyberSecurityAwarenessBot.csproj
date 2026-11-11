@@ -10,4 +10,7 @@
     <Content Include="Audio\VoiceGreeting.wav" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="Assets\Part1Screenshot.png" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MySqlConnector" Version="2.6.2" />
+  </ItemGroup>
 </Project>
