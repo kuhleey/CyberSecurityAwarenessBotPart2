@@ -24,10 +24,9 @@ public static class NlpCommandProcessor
 {
     public static BotCommand Recognise(string input)
     {
-        string text = input.Trim().ToLowerInvariant();
-
-        // Remove extra spaces
-        text = Regex.Replace(text, @"\s+", " ");
+        string text = Regex.Replace(
+            input.Trim().ToLowerInvariant(),
+            @"\s+", " ");
 
         // ACTIVITY LOG
         if (Regex.IsMatch(text,
@@ -39,9 +38,11 @@ public static class NlpCommandProcessor
             };
         }
 
-        // QUIZ COMMANDS
+        // QUIZ
         if (Regex.IsMatch(text,
-            @"\b(quiz|mini.game|test my knowledge)\b"))
+            @"\b(quiz|quizzes|mini.game)\b") ||
+            text.Contains("test my knowledge") ||
+            text.Contains("test me"))
         {
             return new BotCommand
             {
@@ -52,7 +53,8 @@ public static class NlpCommandProcessor
         // VIEW TASKS
         if (Regex.IsMatch(text,
             @"\b(show|view|list|see|display)\b") &&
-            Regex.IsMatch(text, @"\b(tasks|reminders)\b"))
+            Regex.IsMatch(text,
+            @"\b(tasks|reminders)\b"))
         {
             return new BotCommand
             {
@@ -60,44 +62,100 @@ public static class NlpCommandProcessor
             };
         }
 
-        // ADD TASK OR REMINDER
-        Match match = Regex.Match(text,
-            @"\b(?:remind me to|remember to|add (?:a )?task to|create (?:a )?task to|i need to)\s+(.+)",
-            RegexOptions.IgnoreCase);
+        // CREATE TASK OR REMINDER
+        Match match = Regex.Match(
+            text,
+            @"\b(?:remind me to|" +
+            @"remind me about|" +
+            @"set (?:a )?reminder to|" +
+            @"set (?:a )?reminder for|" +
+            @"remember to|" +
+            @"add (?:a )?task to|" +
+            @"create (?:a )?task to|" +
+            @"i need to)\s+(.+)",
+            RegexOptions.IgnoreCase
+        );
 
         if (match.Success)
         {
             string title = match.Groups[1].Value.Trim();
             DateTime? reminder = null;
 
-            // Recognise simple relative dates
+            // TOMORROW
             if (Regex.IsMatch(title, @"\btomorrow\b"))
             {
                 reminder = DateTime.Today
                     .AddDays(1)
                     .AddHours(9);
 
-                title = Regex.Replace(title,
-                    @"\s+tomorrow\b", "",
+                title = Regex.Replace(
+                    title,
+                    @"\s+tomorrow\b",
+                    "",
                     RegexOptions.IgnoreCase);
             }
+
+            // TODAY
             else if (Regex.IsMatch(title, @"\btoday\b"))
             {
                 reminder = DateTime.Now.AddHours(1);
 
-                title = Regex.Replace(title,
-                    @"\s+today\b", "",
+                title = Regex.Replace(
+                    title,
+                    @"\s+today\b",
+                    "",
                     RegexOptions.IgnoreCase);
             }
+
+            // NEXT WEEK
             else if (Regex.IsMatch(title, @"\bnext week\b"))
             {
                 reminder = DateTime.Today
                     .AddDays(7)
                     .AddHours(9);
 
-                title = Regex.Replace(title,
-                    @"\s+next week\b", "",
+                title = Regex.Replace(
+                    title,
+                    @"\s+next week\b",
+                    "",
                     RegexOptions.IgnoreCase);
+            }
+
+            // IN X MINUTES
+            else
+            {
+                Match minutes = Regex.Match(
+                    title,
+                    @"\bin (\d+) minutes?\b");
+
+                if (minutes.Success)
+                {
+                    int amount = int.Parse(
+                        minutes.Groups[1].Value);
+
+                    reminder = DateTime.Now.AddMinutes(amount);
+
+                    title = title.Replace(
+                        minutes.Value, "");
+                }
+                else
+                {
+                    // IN X HOURS
+                    Match hours = Regex.Match(
+                        title,
+                        @"\bin (\d+) hours?\b");
+
+                    if (hours.Success)
+                    {
+                        int amount = int.Parse(
+                            hours.Groups[1].Value);
+
+                        reminder = DateTime.Now.AddHours(amount);
+
+                        title = title.Replace(
+                            hours.Value, "");
+                    }
+                }
             }
 
             title = title.Trim(' ', '.', '!', '?');
@@ -116,4 +174,5 @@ public static class NlpCommandProcessor
         };
     }
 }
+
 

@@ -1,8 +1,3 @@
-
-using System;
-using System.Drawing;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using CyberSecurityAwarenessBot;
 
 namespace CyberSecurityAwarenessBotPart2;
@@ -185,7 +180,7 @@ public sealed class MainForm : Form
             _activityLogger.LogActivity(
                 "Task Manager opened using GUI button");
 
-            using var taskWindow = new TaskManagerForm();
+            using var taskWindow = new TaskManagerForm(_activityLogger);
             taskWindow.ShowDialog(this);
         };
 
@@ -200,17 +195,98 @@ public sealed class MainForm : Form
             quizWindow.ShowDialog(this);
         };
 
+        // CHECK REMINDERS EVERY 30 SECONDS
+        _reminderTimer.Interval = 30000;
+        _reminderTimer.Tick += async (_, _) =>
+        {
+            await CheckRemindersAsync();
+        };
+
+        FormClosed += (_, _) =>
+        {
+            _reminderTimer.Stop();
+            _reminderTimer.Dispose();
+        };
 
         Shown += MainForm_Shown;
+
     }
 
     // STARTUP
     private async void MainForm_Shown(
-        object? sender, EventArgs e)
+       object? sender, EventArgs e)
     {
         AddBotMessage(_bot.WelcomeMessage);
+
         await TestDatabaseConnectionAsync();
+
+        _reminderTimer.Start();
+
+        // Check immediately when the application opens
+        await CheckRemindersAsync();
     }
+
+
+    private async Task CheckRemindersAsync()
+    {
+        if (_checkingReminders)
+            return;
+
+        _checkingReminders = true;
+
+        try
+        {
+            var reminders =
+                await _taskRepository.GetDueRemindersAsync();
+
+            foreach (var reminder in reminders)
+            {
+                // Mark it first to avoid duplicate popups
+                await _taskRepository.MarkReminderShownAsync(
+                    reminder.TaskID);
+
+                string reminderText =
+                    "CYBERSECURITY TASK REMINDER\n\n" +
+                    $"Task: {reminder.Title}\n\n" +
+                    $"Description: {reminder.Description}\n\n" +
+                    $"Due: {reminder.ReminderDate:dd MMM yyyy HH:mm}";
+
+                _activityLogger.LogActivity(
+                    $"Reminder displayed: {reminder.Title}");
+
+                MessageBox.Show(
+                    this,
+                    reminderText,
+                    "Cybersecurity Reminder",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+
+                AddBotMessage(
+                    $"Reminder displayed for: {reminder.Title}");
+            }
+        }
+        catch (Exception ex)
+        {
+            _reminderTimer.Stop();
+
+            AddBotMessage(
+                "Reminder checking stopped because of a database error.");
+
+            MessageBox.Show(
+                this,
+                ex.Message,
+                "Reminder Error",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            );
+        }
+        finally
+        {
+            _checkingReminders = false;
+        }
+    }
+
 
     // MYSQL CONNECTION TEST
     private async Task TestDatabaseConnectionAsync()
@@ -308,17 +384,17 @@ public sealed class MainForm : Form
 
                         break;
                     }
-
                 case BotCommandType.ViewTasks:
                     {
                         AddBotMessage("Opening your tasks...");
 
                         using var taskWindow =
-                            new TaskManagerForm();
+                            new TaskManagerForm(_activityLogger);
 
                         taskWindow.ShowDialog(this);
                         break;
                     }
+            
 
                 case BotCommandType.OpenQuiz:
                     {
@@ -344,7 +420,7 @@ public sealed class MainForm : Form
 
                 default:
                     {
-                        
+
                         string response =
                             _bot.GetResponse(message);
 

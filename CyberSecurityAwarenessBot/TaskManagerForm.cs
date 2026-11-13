@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -9,6 +8,7 @@ namespace CyberSecurityAwarenessBotPart2;
 public sealed class TaskManagerForm : Form
 {
     private readonly TaskRepository _repository = new();
+    private readonly ActivityLogger _activityLogger;
 
     private readonly TextBox _titleInput = new();
     private readonly TextBox _descriptionInput = new();
@@ -27,8 +27,10 @@ public sealed class TaskManagerForm : Form
     private readonly Color _purple =
         Color.FromArgb(45, 29, 57);
 
-    public TaskManagerForm()
+    public TaskManagerForm(ActivityLogger activityLogger)
     {
+        _activityLogger = activityLogger;
+        
         Text = "Cybersecurity Task Assistant";
         StartPosition = FormStartPosition.CenterParent;
         Size = new Size(950, 700);
@@ -244,12 +246,14 @@ public sealed class TaskManagerForm : Form
 
         try
         {
-            await _repository.AddTaskAsync(new CyberTask
+            var task = new CyberTask
             {
                 Title = title,
                 Description = description,
-                ReminderDate = reminder
-            });
+                ReminderDate = reminder.HasValue ? reminder.Value : null,
+            };
+            await _repository.AddTaskAsync(task);
+            _activityLogger.LogActivity($"Task created: {task.Title}");
 
             MessageBox.Show("Task saved successfully!");
 
