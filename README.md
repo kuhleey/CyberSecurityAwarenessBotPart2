@@ -1,15 +1,40 @@
-# Cybersecurity Awareness Bot Part2
-
-A Windows Forms C# application combining Part 1's original voice greeting, ASCII-art logo, user greeting, input validation, chatbot responses, and Part 2's GUI, keyword recognition, varied responses, follow-up context, memory, sentiment detection and error handling.
+# Cybersecurity Awareness Chatbot
 
 
-## Features and where to find them
-- `MainForm.cs`: GUI, chat controls, name input, ASCII logo display, voice button and validation messages.
-- `AsciiArt.cs`: original Part 1 ASCII logo adapted for a label.
-- `Greeting.cs`: Part 1 welcome message, invoked by **Greet me**.
-- `Validation.cs`: Part 1 input checks.
-- `ChatBot.cs` + `Responses.cs`: Part 1 general responses, used for general questions.
-- `VoiceGreeting.cs` + `Audio/VoiceGreeting.wav`: Part 1 recorded greeting with portable audio path.
-- `ChatBotEngine.cs`: Part 2 keyword dictionary, randomized answers, conversation topic tracking, name/interest memory, sentiment and fallback responses.
-- `Assets/Part1Screenshot.png`: original Part 1 screenshot asset included for reference.
+### Project Overview
+
+The Cybersecurity Awareness Chatbot is a C# Windows Forms application developed to educate users about cybersecurity threats and promote safe online practices.
+
+This project is a continuation and extension of the application developed in Parts 1 and 2 of the PROG6221 Portfolio of Evidence.
+
+Rather than developing a separate application for Part 3, the existing Part 2 project was used as the foundation for implementing additional functionality while maintaining the previously developed chatbot features.
+
+### Project Development
+
+**Part 1 – Initial Chatbot Development**
+
+The initial phase focused on developing the core cybersecurity awareness chatbot, allowing users to interact with the application and receive information about cybersecurity topics.
+
+**Part 2 – Chatbot Enhancement**
+
+The second phase extended the chatbot's functionality, improving user interaction and the overall cybersecurity awareness experience.
+
+**Part 3 – Final Application Extension**
+
+The final phase extended the existing application by integrating additional features, including:
+
+- Cybersecurity task management
+- MySQL database integration
+- Task reminders and popup notifications
+- Interactive cybersecurity quiz
+- Natural language command recognition
+- Activity logging
+
+The completed application combines the functionality developed throughout all three parts into one integrated Windows Forms application.
+
+### Development Approach
+
+An incremental development approach was followed, with each part of the Portfolio of Evidence building upon the functionality implemented in the previous part.
+
+This allowed the existing codebase to be reused, extended and improved without unnecessarily recreating the application from scratch.
 
